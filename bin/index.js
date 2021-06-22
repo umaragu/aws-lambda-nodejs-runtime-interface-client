@@ -9,6 +9,10 @@ if(process.argv.length < 3) {
 
 const appRoot = process.cwd();
 const handler = process.argv[2];
+const initFunction;
+if(process.argv.length > 3) {
+  initFunction = process.argv[3]
+}
 
 console.log(`Executing '${handler}' in function directory '${appRoot}'`);
-lambda.run(appRoot, handler);
+lambda.run(appRoot, handler, initFunction);
