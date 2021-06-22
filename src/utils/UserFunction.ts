@@ -117,6 +117,31 @@ function _throwIfInvalidHandler(fullHandlerString: string): void {
     );
   }
 }
+/**
+* Runs the async functions in the global scope.
+*/
+async function _initializeFunction(userApp: any, initFunction: any): Promise<void> {
+  try {
+    
+    if(initFunction) {
+      const initFunctionRef = _resolveHandler(userApp, initFunction);
+      if (!initFunctionRef) {
+        throw new HandlerNotFound(
+          `${initFunction} is undefined or not exported`
+        );
+      }
+
+      await initFunctionRef();
+    }
+  } catch (e) {
+    if (e instanceof TypeError) {
+      // initializeFunction lifecycle hook not implemented
+      return;
+    } else {
+      throw e;
+    }
+  }
+}
 
 /**
  * Load the user's function with the approot and the handler string.
@@ -139,7 +164,8 @@ function _throwIfInvalidHandler(fullHandlerString: string): void {
  */
 export const load = function (
   appRoot: string,
-  fullHandlerString: string
+  fullHandlerString: string,
+  initFunction: any
 ): HandlerFunction {
   _throwIfInvalidHandler(fullHandlerString);
 
@@ -149,8 +175,10 @@ export const load = function (
   const [module, handlerPath] = _splitHandlerString(moduleAndHandler);
 
   const userApp = _loadUserApp(appRoot, moduleRoot, module);
+  
+  await _initializeFunction(userApp, initFunction);
   const handlerFunc = _resolveHandler(userApp, handlerPath);
-
+ 
   if (!handlerFunc) {
     throw new HandlerNotFound(
       `${fullHandlerString} is undefined or not exported`
