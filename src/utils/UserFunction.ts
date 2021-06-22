@@ -162,11 +162,11 @@ async function _initializeFunction(userApp: any, initFunction: any): Promise<voi
  *       for traversing up the filesystem '..')
  *   Errors for scenarios known by the runtime, will be wrapped by Runtime.* errors.
  */
-export const load = function (
+export const load = async function (
   appRoot: string,
   fullHandlerString: string,
   initFunction: any
-): HandlerFunction {
+): Promise<HandlerFunction> {
   _throwIfInvalidHandler(fullHandlerString);
 
   const [moduleRoot, moduleAndHandler] = _moduleRootAndHandler(
