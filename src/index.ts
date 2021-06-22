@@ -18,7 +18,7 @@ import * as UserFunction from "./utils/UserFunction";
 
 LogPatch.patchConsole();
 
-export function run(appRoot: string, handler: string): void {
+export function run(appRoot: string, handler: string, initFunction: string): void {
   if (!process.env.AWS_LAMBDA_RUNTIME_API) {
     throw new Error("Missing Runtime API Server configuration.");
   }
